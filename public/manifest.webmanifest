@@ -1,0 +1,13 @@
+{
+  "name": "자산매니저 MVP",
+  "short_name": "자산매니저",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1D4ED8",
+  "description": "한국 개인 사용자용 수기 자산관리 MVP",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
