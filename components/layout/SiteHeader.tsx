@@ -4,6 +4,7 @@ export const NAV_ITEMS = [
   { href: "/", label: "홈" },
   { href: "/dashboard", label: "대시보드" },
   { href: "/forecast", label: "시나리오" },
+  { href: "/learn", label: "지식" },
 ];
 
 export function SiteHeader() {

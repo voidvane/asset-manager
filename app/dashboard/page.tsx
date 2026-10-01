@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
+import { Term } from "@/components/knowledge/Term";
 import { AllocationBar } from "@/components/charts/AllocationBar";
 import { parseMoney4, formatKRW4, sumMoney4 } from "@/lib/money";
 
@@ -70,8 +71,14 @@ export default function DashboardPage() {
         </Card>
         <Card title="인사이트 (계산 기반)">
           <ul className="list-disc space-y-1 pl-5 text-sm text-slate-700">
-            <li>현금성(예·적금+현금) 비중을 확인하고 비상자금을 점검하세요.</li>
-            <li>투자자산(주식·ETF) 집중도가 높으면 분산을 검토하세요.</li>
+            <li>
+              현금성(<Term slug="cash">예·적금+현금</Term>) 비중을 확인하고
+              비상자금을 점검하세요.
+            </li>
+            <li>
+              투자자산(주식·ETF) 집중도가 높으면{" "}
+              <Term slug="diversification">분산</Term>을 검토하세요.
+            </li>
             <li>
               <Link href="/forecast" className="text-blue-700 underline">
                 시나리오 페이지

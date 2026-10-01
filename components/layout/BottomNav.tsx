@@ -4,7 +4,7 @@ import { NAV_ITEMS } from "./SiteHeader";
 export function BottomNav() {
   return (
     <nav
-      className="sticky bottom-0 z-20 grid grid-cols-3 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden"
+      className="sticky bottom-0 z-20 grid grid-cols-4 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden"
       aria-label="모바일 내비게이션"
     >
       {NAV_ITEMS.map((it) => (

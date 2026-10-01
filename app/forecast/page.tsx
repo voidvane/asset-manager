@@ -12,6 +12,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card } from "@/components/ui/Card";
+import { Term } from "@/components/knowledge/Term";
 import { formatKRW4 } from "@/lib/money";
 import {
   projectAll,
@@ -247,7 +248,10 @@ export default function ForecastPage() {
 
       <Card title="면책 및 가정">
         <ul className="list-disc space-y-1 pl-5 text-xs text-slate-500">
-          <li>연 1회 복리, 저축액은 연초 납입 가정(수익이 과대평가될 수 있음).</li>
+          <li>
+            연 1회 <Term slug="compounding">복리</Term>, 저축액은 연초 납입
+            가정(수익이 과대평가될 수 있음).
+          </li>
           <li>세금·수수료·생애주기 소득변화를 반영하지 않음.</li>
           <li>결과는 보장된 미래가 아니라 가정 비교용 시뮬레이션임.</li>
           <li>방법론: `lib/forecast.ts` 주석 참조.</li>
