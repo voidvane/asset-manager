@@ -22,23 +22,23 @@ enum TransactionKind {
 
 // 사용자
 model User {
-  id           String    @id @default(uuid()) @db.Uuid
-  email        String    @unique @db.Citext
-  passwordHash String    @map("password_hash")
-  name         String    @db.VarChar(50)
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique @db.Citext
+  passwordHash String   @map("password_hash")
+  name         String   @db.VarChar(50)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-  categories   Category[]
-  accounts     Account[]
-  assets       Asset[]
-  liabilities  Liability[]
-  transactions Transaction[]
-  portfolios   Portfolio[]
-  snapshots    AssetSnapshot[]
+  categories    Category[]
+  accounts      Account[]
+  assets        Asset[]
+  liabilities   Liability[]
+  transactions  Transaction[]
+  portfolios    Portfolio[]
+  snapshots     AssetSnapshot[]
   notifications Notification[]
-  settings     UserSetting?
-  auditLogs    AuditLog[]
+  settings      UserSetting?
+  auditLogs     AuditLog[]
 
   @@map("users")
 }
@@ -54,7 +54,7 @@ model Category {
   isSystem  Boolean      @default(false) @map("is_system")
   createdAt DateTime     @default(now()) @map("created_at")
 
-  user         User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
   assets       Asset[]
   liabilities  Liability[]
   transactions Transaction[]
@@ -83,20 +83,20 @@ model Account {
 
 // 자산 (금액은 Decimal(19,4), float 금지)
 model Asset {
-  id          String   @id @default(uuid()) @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  categoryId  String   @map("category_id") @db.Uuid
-  accountId   String?  @map("account_id") @db.Uuid
-  portfolioId String?  @map("portfolio_id") @db.Uuid
-  name        String   @db.VarChar(100)
-  assetType   String   @map("asset_type") @db.VarChar(30)
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  categoryId  String    @map("category_id") @db.Uuid
+  accountId   String?   @map("account_id") @db.Uuid
+  portfolioId String?   @map("portfolio_id") @db.Uuid
+  name        String    @db.VarChar(100)
+  assetType   String    @map("asset_type") @db.VarChar(30)
   // 현재 평가액. 원화 정수도 소수 4자리로 저장
-  amount      Decimal  @db.Decimal(19, 4)
-  currency    String   @default("KRW") @db.Char(3)
-  memo        String?  @db.VarChar(500)
+  amount      Decimal   @db.Decimal(19, 4)
+  currency    String    @default("KRW") @db.Char(3)
+  memo        String?   @db.VarChar(500)
   acquiredAt  DateTime? @map("acquired_at") @db.Date
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   category  Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
@@ -111,18 +111,18 @@ model Asset {
 
 // 부채
 model Liability {
-  id         String   @id @default(uuid()) @db.Uuid
-  userId     String   @map("user_id") @db.Uuid
-  categoryId String   @map("category_id") @db.Uuid
-  name       String   @db.VarChar(100)
-  debtType   String   @map("debt_type") @db.VarChar(30)
-  balance    Decimal  @db.Decimal(19, 4)
-  currency   String   @default("KRW") @db.Char(3)
-  interestRate Decimal? @map("interest_rate") @db.Decimal(7, 4)
-  dueDate    DateTime? @map("due_date") @db.Date
-  memo       String?  @db.VarChar(500)
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id           String    @id @default(uuid()) @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  categoryId   String    @map("category_id") @db.Uuid
+  name         String    @db.VarChar(100)
+  debtType     String    @map("debt_type") @db.VarChar(30)
+  balance      Decimal   @db.Decimal(19, 4)
+  currency     String    @default("KRW") @db.Char(3)
+  interestRate Decimal?  @map("interest_rate") @db.Decimal(7, 4)
+  dueDate      DateTime? @map("due_date") @db.Date
+  memo         String?   @db.VarChar(500)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
@@ -198,10 +198,10 @@ model Notification {
 }
 
 model UserSetting {
-  userId   String  @id @map("user_id") @db.Uuid
-  currency String  @default("KRW") @db.Char(3)
-  theme    String  @default("light") @db.VarChar(10)
-  locale   String  @default("ko-KR") @db.VarChar(10)
+  userId   String @id @map("user_id") @db.Uuid
+  currency String @default("KRW") @db.Char(3)
+  theme    String @default("light") @db.VarChar(10)
+  locale   String @default("ko-KR") @db.VarChar(10)
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
