@@ -1,18 +1,17 @@
 import Link from "next/link";
-
-const items = [
-  { href: "/", label: "홈" },
-  { href: "/dashboard", label: "대시보드" },
-];
+import { NAV_ITEMS } from "./SiteHeader";
 
 export function BottomNav() {
   return (
-    <nav className="sticky bottom-0 grid grid-cols-2 border-t border-slate-200 bg-white">
-      {items.map((it) => (
+    <nav
+      className="sticky bottom-0 z-20 grid grid-cols-3 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden"
+      aria-label="모바일 내비게이션"
+    >
+      {NAV_ITEMS.map((it) => (
         <Link
           key={it.href}
           href={it.href}
-          className="p-4 text-center text-sm font-medium text-slate-700"
+          className="px-2 py-3 text-center text-sm font-medium text-slate-700 active:bg-slate-100"
         >
           {it.label}
         </Link>
