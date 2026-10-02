@@ -1,0 +1,224 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 열거형
+enum CategoryKind {
+  ASSET
+  LIABILITY
+  INCOME
+  EXPENSE
+}
+
+enum TransactionKind {
+  INCOME
+  EXPENSE
+}
+
+// 사용자
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique @db.Citext
+  passwordHash String   @map("password_hash")
+  name         String   @db.VarChar(50)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  categories    Category[]
+  accounts      Account[]
+  assets        Asset[]
+  liabilities   Liability[]
+  transactions  Transaction[]
+  portfolios    Portfolio[]
+  snapshots     AssetSnapshot[]
+  notifications Notification[]
+  settings      UserSetting?
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+// 카테고리 (시스템 기본 + 사용자 정의)
+model Category {
+  id        String       @id @default(uuid()) @db.Uuid
+  userId    String?      @map("user_id") @db.Uuid
+  kind      CategoryKind
+  name      String       @db.VarChar(50)
+  icon      String?      @db.VarChar(20)
+  color     String?      @db.VarChar(10)
+  isSystem  Boolean      @default(false) @map("is_system")
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets       Asset[]
+  liabilities  Liability[]
+  transactions Transaction[]
+
+  @@unique([userId, kind, name])
+  @@index([userId, kind])
+  @@map("categories")
+}
+
+// 계좌 실체 (은행/증권 계좌 등, 수기 등록. 추후 연동 확장용)
+model Account {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  institution   String   @db.VarChar(100)
+  accountNumber String?  @map("account_number") @db.VarChar(100)
+  nickname      String?  @db.VarChar(100)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets Asset[]
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+// 자산 (금액은 Decimal(19,4), float 금지)
+model Asset {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  categoryId  String    @map("category_id") @db.Uuid
+  accountId   String?   @map("account_id") @db.Uuid
+  portfolioId String?   @map("portfolio_id") @db.Uuid
+  name        String    @db.VarChar(100)
+  assetType   String    @map("asset_type") @db.VarChar(30)
+  // 현재 평가액. 원화 정수도 소수 4자리로 저장
+  amount      Decimal   @db.Decimal(19, 4)
+  currency    String    @default("KRW") @db.Char(3)
+  memo        String?   @db.VarChar(500)
+  acquiredAt  DateTime? @map("acquired_at") @db.Date
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category  Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  account   Account?   @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  portfolio Portfolio? @relation(fields: [portfolioId], references: [id], onDelete: SetNull)
+
+  @@index([userId, assetType])
+  @@index([userId, categoryId])
+  @@index([userId, updatedAt])
+  @@map("assets")
+}
+
+// 부채
+model Liability {
+  id           String    @id @default(uuid()) @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  categoryId   String    @map("category_id") @db.Uuid
+  name         String    @db.VarChar(100)
+  debtType     String    @map("debt_type") @db.VarChar(30)
+  balance      Decimal   @db.Decimal(19, 4)
+  currency     String    @default("KRW") @db.Char(3)
+  interestRate Decimal?  @map("interest_rate") @db.Decimal(7, 4)
+  dueDate      DateTime? @map("due_date") @db.Date
+  memo         String?   @db.VarChar(500)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@index([userId, debtType])
+  @@index([userId, updatedAt])
+  @@map("liabilities")
+}
+
+// 수입/지출 거래
+model Transaction {
+  id         String          @id @default(uuid()) @db.Uuid
+  userId     String          @map("user_id") @db.Uuid
+  categoryId String          @map("category_id") @db.Uuid
+  kind       TransactionKind
+  amount     Decimal         @db.Decimal(19, 4)
+  currency   String          @default("KRW") @db.Char(3)
+  occurredAt DateTime        @map("occurred_at") @db.Date
+  memo       String?         @db.VarChar(500)
+  createdAt  DateTime        @default(now()) @map("created_at")
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@index([userId, occurredAt])
+  @@index([userId, kind, occurredAt])
+  @@map("transactions")
+}
+
+// 사용자 정의 포트폴리오 그룹
+model Portfolio {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets Asset[]
+
+  @@unique([userId, name])
+  @@map("portfolios")
+}
+
+// 월별 스냅샷 (AssetHistory)
+model AssetSnapshot {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  yearMonth        String   @map("year_month") @db.Char(7)
+  totalAssets      Decimal  @map("total_assets") @db.Decimal(19, 4)
+  totalLiabilities Decimal  @map("total_liabilities") @db.Decimal(19, 4)
+  netWorth         Decimal  @map("net_worth") @db.Decimal(19, 4)
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, yearMonth])
+  @@index([userId, yearMonth])
+  @@map("asset_snapshots")
+}
+
+model Notification {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  title     String   @db.VarChar(200)
+  body      String?  @db.VarChar(1000)
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
+  @@map("notifications")
+}
+
+model UserSetting {
+  userId   String @id @map("user_id") @db.Uuid
+  currency String @default("KRW") @db.Char(3)
+  theme    String @default("light") @db.VarChar(10)
+  locale   String @default("ko-KR") @db.VarChar(10)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+// 보안 감사 로그 (금액 미저장, 행위만)
+model AuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  action    String   @db.VarChar(100)
+  ip        String?  @db.VarChar(45)
+  userAgent String?  @map("user_agent") @db.VarChar(500)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@map("audit_logs")
+}
