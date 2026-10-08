@@ -4,8 +4,8 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
 
 export const metadata: Metadata = {
-  title: "자산매니저 MVP",
-  description: "한국 개인 사용자용 수기 자산관리 MVP",
+  title: "KKB 대표",
+  description: "KKB 대표 — 수기 자산관리와 경제 학습",
   manifest: "/manifest.webmanifest",
 };
 
@@ -30,7 +30,7 @@ export default function RootLayout({
           </div>
           <footer className="hidden border-t border-slate-200 bg-white md:block">
             <div className="mx-auto w-full max-w-6xl px-6 py-6 text-xs text-slate-500 lg:px-8">
-              자산매니저 MVP — 수기 자산관리 및 시나리오 시뮬레이션. 예측 결과는
+              KKB 대표 — 수기 자산관리 및 시나리오 시뮬레이션. 예측 결과는
               가정에 기반한 시뮬레이션이며 미래를 보장하지 않습니다.
             </div>
           </footer>

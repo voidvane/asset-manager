@@ -55,6 +55,19 @@ export default function HomePage() {
         ))}
       </section>
       <section>
+        <Card title="기존 자산관리 기능">
+          <p className="text-sm text-slate-600">
+            수기 자산·부채 입력과 대시보드는 그대로 유지됩니다.
+          </p>
+          <Link
+            href="/dashboard"
+            className="mt-2 inline-block text-sm font-semibold text-blue-700 underline underline-offset-2 hover:text-blue-900"
+          >
+            자산 대시보드로 이동 →
+          </Link>
+        </Card>
+      </section>
+      <section>
         <Card title="다음 할 일">
           <ul className="list-disc space-y-1 pl-5 text-sm text-slate-700">
             <li>PostgreSQL 연결 + Prisma 마이그레이션</li>
