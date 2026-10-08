@@ -1,59 +1,80 @@
 import Link from "next/link";
-import { EconomicSummary } from "@/components/econ/EconomicSummary";
-import { TermList } from "@/components/terms/TermCard";
-import { ECONOMIC_TERMS } from "@/data/terms";
+import { Card } from "@/components/ui/Card";
+
+const FEATURES = [
+  {
+    title: "자산 대시보드",
+    desc: "총자산·총부채·순자산과 자산 구성비를 한눈에 확인합니다.",
+    href: "/dashboard",
+    cta: "대시보드 보기",
+    primary: true,
+  },
+  {
+    title: "시나리오 시뮬레이션",
+    desc: "수익률·물가·저축 가정에 따른 3개 시나리오(보수/기본/낙관)를 비교합니다.",
+    href: "/forecast",
+    cta: "시나리오 실행",
+    primary: true,
+  },
+  {
+    title: "API 상태",
+    desc: "백엔드 헬스체크 엔드포인트. 배포 확인용입니다.",
+    href: "/api/health",
+    cta: "상태 확인",
+    primary: false,
+  },
+];
 
 export default function HomePage() {
-  const preview = ECONOMIC_TERMS.slice(0, 6);
-
   return (
-    <main className="space-y-6">
-      <section aria-label="서비스 소개" className="card overflow-hidden p-6">
-        <p className="text-xs font-semibold text-[var(--color-primary)]">경제 초보자를 위한 하루 5분 경제</p>
-        <h1 className="mt-1 text-2xl font-black leading-snug">
-          오늘 경제 상황 확인하고,
-          <br />
-          카드 넘기며 용어 배우기
+    <main className="space-y-6 py-6 md:py-10">
+      <section className="space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+          내 자산을 기록하고, 미래를 시뮬레이션하세요
         </h1>
-        <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-[var(--color-text-secondary)]">
-          어려운 금융 뉴스부터 보지 마세요. 환율·증시·금리만 가볍게 확인하고,
-          궁금한 용어부터 하나씩 배워 보세요.
+        <p className="max-w-2xl text-sm text-slate-600 md:text-base">
+          수기 입력 중심의 자산관리 MVP입니다. 현재 자산을 집계하고, 가정을
+          바꿔가며 장기 시나리오를 비교할 수 있습니다.
         </p>
-        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-          <Link href="/learn" className="btn-primary justify-center">
-            🃏 오늘의 카드 학습 시작
-          </Link>
-          <Link href="/terms" className="btn-secondary justify-center">
-            📚 용어 찾아보기
-          </Link>
-        </div>
-        <ol className="mt-4 grid grid-cols-2 gap-2 text-xs text-[var(--color-text-secondary)] sm:grid-cols-3">
-          <li className="rounded-xl bg-slate-50 p-2">1 · 현황 빠르게 확인</li>
-          <li className="rounded-xl bg-slate-50 p-2">2 · 용어 탐색 후 클릭</li>
-          <li className="rounded-xl bg-slate-50 p-2">3 · 카드로 반복 학습</li>
-        </ol>
       </section>
-
-      <EconomicSummary />
-
-      <section aria-label="추천 용어" className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">처음 보면 좋은 용어</h2>
-          <Link href="/terms" className="text-sm font-semibold text-[var(--color-primary)] underline underline-offset-2">
-            전체 보기
-          </Link>
-        </div>
-        <TermList terms={preview} />
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {FEATURES.map((f) => (
+          <Card key={f.href} title={f.title}>
+            <p className="mb-4 min-h-10 text-sm text-slate-600">{f.desc}</p>
+            <Link
+              href={f.href}
+              className={
+                f.primary
+                  ? "block rounded-xl bg-blue-700 p-3 text-center text-sm font-semibold text-white hover:bg-blue-800"
+                  : "block rounded-xl border border-slate-200 p-3 text-center text-sm font-semibold hover:bg-slate-50"
+              }
+            >
+              {f.cta}
+            </Link>
+          </Card>
+        ))}
       </section>
-
-      <section aria-label="기존 자산관리" className="card p-4">
-        <h2 className="text-sm font-semibold text-[var(--color-text-secondary)]">기존 자산관리 기능</h2>
-        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-          수기 자산·부채 입력과 대시보드는 그대로 유지됩니다.
-        </p>
-        <Link href="/dashboard" className="mt-2 inline-block text-sm font-semibold text-[var(--color-primary)] underline underline-offset-2">
-          자산 대시보드로 이동 →
-        </Link>
+      <section>
+        <Card title="기존 자산관리 기능">
+          <p className="text-sm text-slate-600">
+            수기 자산·부채 입력과 대시보드는 그대로 유지됩니다.
+          </p>
+          <Link
+            href="/dashboard"
+            className="mt-2 inline-block text-sm font-semibold text-blue-700 underline underline-offset-2 hover:text-blue-900"
+          >
+            자산 대시보드로 이동 →
+          </Link>
+        </Card>
+      </section>
+      <section>
+        <Card title="다음 할 일">
+          <ul className="list-disc space-y-1 pl-5 text-sm text-slate-700">
+            <li>PostgreSQL 연결 + Prisma 마이그레이션</li>
+            <li>회원가입/로그인(JWT HttpOnly 쿠키)</li>
+            <li>자산/부채 CRUD + 대시보드 실집계</li>
+          </ul>
+        </Card>
       </section>
     </main>
   );

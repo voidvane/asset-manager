@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { AppShell } from "@/components/layout/AppShell";
-import { FavoritesProvider } from "@/components/providers/FavoritesProvider";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { BottomNav } from "@/components/layout/BottomNav";
 
 export const metadata: Metadata = {
-  title: "경제카드 — 쉽게 배우는 경제 용어",
-  description: "경제 초보자를 위한 오늘의 경제 현황과 카드형 경제 용어 학습 웹앱",
+  title: "KKB 대표",
+  description: "KKB 대표 — 수기 자산관리와 경제 학습",
   manifest: "/manifest.webmanifest",
 };
 
@@ -13,16 +13,29 @@ export const viewport: Viewport = {
   themeColor: "#1D4ED8",
   width: "device-width",
   initialScale: 1,
-  viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="ko">
-      <body className="min-h-screen bg-[var(--color-background)] text-[var(--color-text)] antialiased">
-        <FavoritesProvider>
-          <AppShell>{children}</AppShell>
-        </FavoritesProvider>
+      <body className="min-h-screen bg-slate-100 text-slate-900 antialiased">
+        <div className="flex min-h-screen flex-col">
+          <SiteHeader />
+          <div className="mx-auto w-full max-w-6xl flex-1 px-4 pb-8 sm:px-6 md:pb-12 lg:px-8">
+            {children}
+          </div>
+          <footer className="hidden border-t border-slate-200 bg-white md:block">
+            <div className="mx-auto w-full max-w-6xl px-6 py-6 text-xs text-slate-500 lg:px-8">
+              KKB 대표 — 수기 자산관리 및 시나리오 시뮬레이션. 예측 결과는
+              가정에 기반한 시뮬레이션이며 미래를 보장하지 않습니다.
+            </div>
+          </footer>
+          <BottomNav />
+        </div>
       </body>
     </html>
   );
